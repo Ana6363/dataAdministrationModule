@@ -4,6 +4,8 @@ const AllergyController = require('../controllers/AllergyController');
 
 const router = express.Router();
 
+app.use(express.json());
+
 router.get('/status', (req, res) => {
     res.status(200).json({ message: 'API is running!' });
 });

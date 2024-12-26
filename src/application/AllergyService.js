@@ -3,25 +3,30 @@ const mongoose = require('mongoose');
 
 
 class AllergyService {
-    static async createAllergy(name, description) {
-
-        if (!name || !description) {
-            console.error("Validation failed: Missing 'name' or 'description'.");
-            throw new Error('Name and description are required.');
-        }
-
-        console.log("Mongoose connection status:", mongoose.connection.readyState);
-
-        const allergy = new AllergyModel({ name, description });
-
+    static async createAllergy(req, res) {
         try {
-            console.log("Attempting to save allergy:", allergy);
-            await allergy.save();
-            console.log("Allergy saved successfully:", allergy);
-            return allergy;
+            const { name, description } = req.body;
+
+            // Validate input
+            if (!name || !description) {
+                return res.status(400).json({ error: 'Name and description are required.' });
+            }
+
+            // Simulate allergy creation (e.g., save to a database)
+            const allergy = { name, description };
+
+            console.log('Allergy created:', allergy);
+
+            // Return success response
+            return res.status(201).json({
+                message: 'Allergy created successfully.',
+                allergy,
+            });
         } catch (error) {
-            console.error("Error saving allergy:", error);
-            throw error;
+            console.error('Error creating allergy:', error);
+
+            // Return error response
+            return res.status(500).json({ error: 'Failed to create allergy.' });
         }
     }
 

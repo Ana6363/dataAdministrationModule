@@ -1,6 +1,5 @@
 require('dotenv').config();
 const express = require('express');
-const { processMessages } = require('./src/application/ServiceBusListener'); // Adjust the path as needed
 const connectToDatabase  = require('./src/infrastructure/DbConnection/MongoConnection');
 
 const app = express();
@@ -18,12 +17,7 @@ async function startServer() {
         await connectToDatabase();
         console.log('Database connected successfully.');
 
-        console.log('Starting Service Bus Listener...');
-        processMessages().catch((error) => {
-            console.error('Error starting Service Bus listener:', error);
-        });
-
-        const PORT = process.env.PORT || 3000;
+        const PORT = process.env.PORT || 3001;
         app.listen(PORT, () => {
             console.log(`Server running on port ${PORT}`);
         });
