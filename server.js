@@ -11,6 +11,10 @@ const AllergyController = require('./src/presentacion/controllers/AllergyControl
 app.post('/api/allergies', AllergyController.createAllergy);
 app.get('/api/allergies', AllergyController.getAllAllergies);
 
+const MedicalConditionsController = require('./src/presentacion/controllers/MedicalConditionsController');
+app.post('/api/medical-conditions', MedicalConditionsController.createMedicalCondition);
+app.get('/api/medical-conditions', MedicalConditionsController.getAllMedicalConditions);
+
 async function startServer() {
     try {
         console.log('Connecting to the database...');

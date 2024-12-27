@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const AllergyController = require('../controllers/AllergyController');
+const MedicalConditionsController = require('../controllers/MedicalConditionsController');
 
 const router = express.Router();
 
@@ -31,5 +32,9 @@ router.get('/db-status', async (req, res) => {
 // Allergies
 router.post('/allergies', AllergyController.createAllergy);
 router.get('/allergies', AllergyController.getAllAllergies);
+
+// Medical conditions
+router.post('/medical-conditions', MedicalConditionsController.createMedicalCondition);
+router.get('/medical-conditions', MedicalConditionsController.getAllMedicalConditions);
 
 module.exports = router;
