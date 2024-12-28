@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const AllergyController = require('../controllers/AllergyController');
 const MedicalConditionsController = require('../controllers/MedicalConditionsController');
+const PatientMedicalRecordController = require('../controllers/PatientMedicalRecordController');
 
 const router = express.Router();
 
@@ -36,5 +37,9 @@ router.get('/allergies', AllergyController.getAllAllergies);
 // Medical conditions
 router.post('/medical-conditions', MedicalConditionsController.createMedicalCondition);
 router.get('/medical-conditions', MedicalConditionsController.getAllMedicalConditions);
+
+// Patient Medical Records
+router.put('/patient-medical-records', PatientMedicalRecordController.updatePatientMedicalRecord);
+router.get('/patient-medical-records', PatientMedicalRecordController.getAllPatientMedicalRecords);
 
 module.exports = router;

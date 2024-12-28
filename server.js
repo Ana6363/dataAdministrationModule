@@ -15,6 +15,10 @@ const MedicalConditionsController = require('./src/presentacion/controllers/Medi
 app.post('/api/medical-conditions', MedicalConditionsController.createMedicalCondition);
 app.get('/api/medical-conditions', MedicalConditionsController.getAllMedicalConditions);
 
+const PatientMedicalRecordController = require('./src/presentacion/controllers/PatientMedicalRecordController');
+app.put('/api/patient-medical-records', PatientMedicalRecordController.updatePatientMedicalRecord);
+app.get('/api/patient-medical-records', PatientMedicalRecordController.getAllPatientMedicalRecords);
+
 async function startServer() {
     try {
         console.log('Connecting to the database...');
