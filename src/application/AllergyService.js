@@ -1,4 +1,4 @@
-const AllergyModel = require('../domain/models/allergyModel');
+const AllergyModel = require('../domain/models/AllergyModel');
 const mongoose = require('mongoose');
 
 
