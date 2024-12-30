@@ -101,6 +101,36 @@ class MedicalConditionsController {
         }
     }
 
+    static async getMedicalConditionByName(req, res) {
+        try {
+            const { name } = req.params;
+
+            if (!name) {
+                return res.status(400).json({ error: 'Name is required to fetch a medical condition.' });
+            }
+
+            const medicalCondition = await MedicalConditionsService.getMedicalConditionByName(name);
+
+            if (!medicalCondition) {
+                return res.status(404).json({
+                    error: 'Medical condition not found.',
+                });
+            }
+
+            return res.status(200).json({
+                message: 'Medical condition fetched successfully.',
+                medicalCondition,
+            });
+        } catch (error) {
+            console.error('Error fetching medical condition:', error);
+
+            return res.status(500).json({
+                error: 'Failed to fetch medical condition.',
+                details: error.message,
+            });
+        }
+    }
+
 }
 
 module.exports = MedicalConditionsController;
