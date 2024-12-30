@@ -6,15 +6,12 @@ const PatientMedicalRecordController = require('../controllers/PatientMedicalRec
 
 const router = express.Router();
 
-app.use(express.json());
-
+// Status check endpoint
 router.get('/status', (req, res) => {
     res.status(200).json({ message: 'API is running!' });
 });
 
-
-
-
+// Database status check
 router.get('/db-status', async (req, res) => {
     const dbState = mongoose.connection.readyState;
     const states = {
@@ -33,8 +30,10 @@ router.get('/db-status', async (req, res) => {
 // Allergies
 router.post('/allergies', AllergyController.createAllergy);
 router.get('/allergies', AllergyController.getAllAllergies);
+router.put('/allergies', AllergyController.updateAllergy);
+router.delete('/allergies', AllergyController.deleteAllergy);
 
-// Medical conditions
+// Medical Conditions
 router.post('/medical-conditions', MedicalConditionsController.createMedicalCondition);
 router.get('/medical-conditions', MedicalConditionsController.getAllMedicalConditions);
 
