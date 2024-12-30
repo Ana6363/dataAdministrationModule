@@ -36,6 +36,8 @@ router.delete('/allergies', AllergyController.deleteAllergy);
 // Medical Conditions
 router.post('/medical-conditions', MedicalConditionsController.createMedicalCondition);
 router.get('/medical-conditions', MedicalConditionsController.getAllMedicalConditions);
+router.put('/medical-conditions', MedicalConditionsController.updateMedicalCondition);
+router.delete('/medical-conditions', MedicalConditionsController.deleteMedicalCondition);
 
 // Patient Medical Records
 router.put('/patient-medical-records', PatientMedicalRecordController.updatePatientMedicalRecord);

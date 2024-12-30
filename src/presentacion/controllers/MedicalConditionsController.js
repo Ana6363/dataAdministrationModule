@@ -47,6 +47,60 @@ class MedicalConditionsController {
         }
     }
 
+    static async updateMedicalCondition(req, res) {
+        try {
+            const { name, description } = req.body;
+
+            if (!name || !description) {
+                return res.status(400).json({ error: 'Name and description are required.' });
+            }
+
+            const medicalConditionUpdated = await MedicalConditionsService.updateMedicalCondition({ name, description });
+
+            return res.status(200).json({
+                message: 'Medical condition updated successfully.',
+                medicalCondition: medicalConditionUpdated,
+            });
+        } catch (error) {
+            console.error('Error updating medical condition:', error);
+
+            return res.status(500).json({
+                error: 'Failed to update medical condition.',
+                details: error.message,
+            });
+        }
+    }
+
+    static async deleteMedicalCondition(req, res) {
+        try {
+            const { name } = req.body;
+
+            if (!name) {
+                return res.status(400).json({ error: 'Name is required to delete a medical condition.' });
+            }
+
+            const medicalConditionDeleted = await MedicalConditionsService.deleteMedicalCondition(name);
+
+            if (!medicalConditionDeleted) {
+                return res.status(404).json({
+                    error: 'Medical condition not found.',
+                });
+            }
+
+            return res.status(200).json({
+                message: 'Medical condition deleted successfully.',
+                medicalCondition: medicalConditionDeleted,
+            });
+        } catch (error) {
+            console.error('Error deleting medical condition:', error);
+
+            return res.status(500).json({
+                error: 'Failed to delete medical condition.',
+                details: error.message,
+            });
+        }
+    }
+
 }
 
 module.exports = MedicalConditionsController;

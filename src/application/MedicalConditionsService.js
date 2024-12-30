@@ -1,5 +1,6 @@
 const MedicalConditionsModel = require('../domain/models/MedicalConditionsModel');
 const mongoose = require('mongoose');
+const MedicalConditionsRepository = require('../infrastructure/repositories/MedicalConditionsRepository');
 
 class MedicalConditionsService {
     static async createMedicalCondition(req, res) {
@@ -39,6 +40,41 @@ class MedicalConditionsService {
             console.error("Error fetching medical conditions:", error);
             throw error;
         }
+    }
+
+    static async updateMedicalCondition(data) {
+        const { name, description } = data;
+
+        if (!name && !description) {
+            throw new Error('At least one field (name or description) is required to update.');
+        }
+
+        const existingMedicalCondition = await MedicalConditionsRepository.findByName(data.name);
+
+        if (!existingMedicalCondition) {
+            throw new Error('Medical condition not found.');
+        }
+
+        if (description && description !== existingMedicalCondition.description) {
+            existingMedicalCondition.description = description;
+        }
+
+        // Save and return the updated medical condition
+        return await existingMedicalCondition.save();
+    }
+
+    static async deleteMedicalCondition(name) {
+        if (!name) {
+            throw new Error('Name is required to delete a medical condition.');
+        }
+
+        // Simulate medical condition deletion (e.g., remove from a database)
+        const deletedMedicalCondition = await MedicalConditionsRepository.deleteByName(name);
+
+        console.log('Medical condition deleted:', deletedMedicalCondition);
+
+        // Return success response
+        return { message: 'Medical condition deleted successfully.', deletedMedicalCondition };
     }
 }
 
