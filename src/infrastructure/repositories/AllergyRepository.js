@@ -1,4 +1,4 @@
-const Allergy = require('../../domain/models/allergyModel');
+const Allergy = require('../../domain/models/AllergyModel');
 
 class AllergyRepository {
     static async createAllergy(data) {

@@ -1,5 +1,5 @@
 const AllergyService = require('../../application/AllergyService');
-const AllergyModel = require('../../domain/models/allergyModel');
+const AllergyModel = require('../../domain/models/AllergyModel');
 
 class AllergyController {
     static async createAllergy(req, res) {
