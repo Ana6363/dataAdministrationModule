@@ -1,16 +1,8 @@
 require('dotenv').config();
 const express = require('express');
-const cors = require('cors'); // Import the cors package
 const connectToDatabase = require('./src/infrastructure/DbConnection/MongoConnection');
 
 const app = express();
-
-// Configure CORS
-app.use(cors({
-    origin: 'https://localhost:3000', // Replace with your React app's domain
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization']
-}));
 
 app.use(express.json());
 
