@@ -77,19 +77,6 @@ class MedicalConditionsService {
         return { message: 'Medical condition deleted successfully.', deletedMedicalCondition };
     }
 
-    static async getMedicalConditionByName(name) {
-        if (!name) {
-            throw new Error('Name is required to fetch a medical condition.');
-        }
-
-        // Simulate fetching a medical condition by name (e.g., from a database)
-        const medicalCondition = await MedicalConditionsRepository.findByName(name);
-
-        console.log('Fetched medical condition:', medicalCondition);
-
-        // Return the fetched medical condition
-        return medicalCondition;
-    }
 }
 
 module.exports = MedicalConditionsService;
