@@ -1,72 +1,58 @@
 const PatientMedicalRecordModel = require('../domain/models/PatientMedicalRecordModel');
 const mongoose = require('mongoose');
+const PatientMedicalRecordRepository = require('../infrastructure/repositories/PatientMedicalRecordRepository');
+
 
 class PatientMedicalRecordService {
-    static async updatePatientMedicalRecord(req, res) {
-        try {
-            const { recordNumber, medicalConditions, allergies, fullName } = req.body;
+    static async updatePatientMedicalRecord(data) {
+        
+        const { recordNumber, medicalConditions, allergies, fullName } = data;
 
-            // Validate input
-            if (!recordNumber || !medicalConditions || !allergies || !fullName) {
-                return res.status(400).json({ error: 'Record number, medical conditions, allergies and full name are required.' });
-            }
-
-            // Update patient medical record
-            const updatedRecord = await PatientMedicalRecordModel.findOneAndUpdate(
-                { recordNumber },
-                { medicalConditions, allergies, fullName },
-                { new: true }
-            );
-
-            if (!updatedRecord) {
-                return res.status(404).json({ error: 'Patient medical record not found.' });
-            }
-
-            console.log('Patient medical record updated:', updatedRecord);
-
-            // Return success response
-            return res.status(200).json({
-                message: 'Patient medical record updated successfully.',
-                updatedRecord,
-            });
-        } catch (error) {
-            console.error('Error updating patient medical record:', error);
-
-            // Return error response
-            return res.status(500).json({ error: 'Failed to update patient medical record.' });
+        // Validate input
+        if (!recordNumber || !medicalConditions || !allergies || !fullName) {
+            return res.status(400).json({ error: 'Record number, medical conditions, allergies and full name are required.' });
         }
+
+        const existingPatientMedicalRecord = await PatientMedicalRecordRepository.findByRecordNumber(data.recordNumber);
+
+        if (!existingPatientMedicalRecord) {
+            throw new Error('Patient medical record not found.');
+        }
+
+        if (medicalConditions && medicalConditions !== existingPatientMedicalRecord.medicalConditions) {
+            existingPatientMedicalRecord.medicalConditions = medicalConditions;
+        }
+
+        if (allergies && allergies !== existingPatientMedicalRecord.allergies) {    
+            existingPatientMedicalRecord.allergies = allergies;
+        }
+
+        if (fullName && fullName !== existingPatientMedicalRecord.fullName) {    
+            existingPatientMedicalRecord.fullName = fullName;
+        }
+
+        // Save and return the updated patient medical record
+        return await existingPatientMedicalRecord.save();
+
+            
     }
 
-    /*static async searchPatientMedicalRecords(req, res) {
-        try {
-            const { recordNumber } = req.query;
-
-            // Validate input
-            if (!recordNumber) {
-                return res.status(400).json({ error: 'Patient ID is required.' });
-            }
-
-            // Search for patient medical records
-            const patientMedicalRecords = await PatientMedicalRecordModel.find({ recordNumber });
-
-            if (patientMedicalRecords.length === 0) {
-                return res.status(404).json({ error: 'No patient medical records found.' });
-            }
-
-            console.log('Patient medical records found:', patientMedicalRecords);
-
-            // Return success response
-            return res.status(200).json({
-                message: 'Patient medical records found successfully.',
-                patientMedicalRecords,
-            });
-        } catch (error) {
-            console.error('Error searching for patient medical records:', error);
-
-            // Return error response
-            return res.status(500).json({ error: 'Failed to search for patient medical records.' });
+    static async deletePatientMedicalRecord(recordNumber) {
+        if (!recordNumber) {
+            throw new Error('Record number is required to delete.');
         }
-    }*/
+
+        const deletePatientMedicalRecord = await PatientMedicalRecordRepository.deleteByRecordNumber(recordNumber);
+
+        if (!deletePatientMedicalRecord) {
+            throw new Error('Patient medical record not found.');
+        }
+
+        // Delete the patient medical record
+        return { message: 'Patient medical record deleted successfully',deletePatientMedicalRecord };
+    }
+
+    
 
     static async getAllPatientMedicalRecords() {
         try {
