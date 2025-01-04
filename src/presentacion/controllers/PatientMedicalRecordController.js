@@ -79,6 +79,37 @@ class PatientMedicalRecordController {
         }
     }
 
+    static async getPatientMedicalRecordByRecordNumber(req, res) {
+        try {
+            const { recordNumber } = req.params;
+
+            if (!recordNumber) {
+                return res.status(400).json({ error: 'Record number is required to fetch a patient medical record.' });
+            }
+
+            const patientMedicalRecord = await PatientMedicalRecordService.getPatientMedicalRecordByRecordNumber(recordNumber);
+
+            if (!patientMedicalRecord) {
+                return res.status(404).json({
+                    error: 'Patient medical record not found.',
+                });
+            }
+
+            return res.status(200).json({
+                message: 'Patient medical record fetched successfully.',
+                data: patientMedicalRecord,
+            });
+
+        } catch (error) {
+            console.error('Error fetching patient medical record by record number:', error);
+
+            return res.status(500).json({
+                error: 'Failed to fetch patient medical record.',
+                details: error.message,
+            });
+        }
+    }
+
 }
 
 module.exports = PatientMedicalRecordController;

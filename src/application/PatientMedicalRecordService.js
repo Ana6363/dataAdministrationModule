@@ -65,6 +65,18 @@ class PatientMedicalRecordService {
             throw error;
         }
     }
+
+    static async getPatientMedicalRecordByRecordNumber(recordNumber) {
+        try {
+            console.log("Fetching patient medical record by record number from the database...");
+            const patientMedicalRecord = await PatientMedicalRecordService.findByRecordNumber(recordNumber);
+            console.log("Fetched patient medical record:", patientMedicalRecord);
+            return patientMedicalRecord;
+        } catch (error) {
+            console.error("Error fetching patient medical record:", error);
+            throw error;
+        }
+    }
 }
 
 module.exports = PatientMedicalRecordService;

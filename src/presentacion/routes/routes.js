@@ -43,5 +43,6 @@ router.delete('/medical-conditions', MedicalConditionsController.deleteMedicalCo
 router.put('/patient-medical-records', PatientMedicalRecordController.updatePatientMedicalRecord);
 router.get('/patient-medical-records', PatientMedicalRecordController.getAllPatientMedicalRecords);
 router.delete('/patient-medical-records', PatientMedicalRecordController.deletePatientMedicalRecord);
+router.get('/patient-medical-records/:recordNumber', PatientMedicalRecordController.getPatientMedicalRecordByRecordNumber);
 
 module.exports = router;
