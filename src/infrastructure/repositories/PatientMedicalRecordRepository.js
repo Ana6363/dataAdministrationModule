@@ -13,4 +13,7 @@ class PatientMedicalRecordRepository {
     static async getAllPatientMedicalRecords() {
         return await PatientMedicalRecord.find(); // Fetch all documents in the patientMedicalRecords collection
     }
+    static async deleteByRecordNumber(recordNumber) {
+        return await PatientMedicalRecord.findOneAndDelete({ recordNumber });
+    }    
 }

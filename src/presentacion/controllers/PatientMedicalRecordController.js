@@ -10,19 +10,49 @@ class PatientMedicalRecordController {
                 return res.status(400).json({ error: 'Record number, allergies, medical conditions, and full name are required.' });
             }
 
-            const patientMedicalRecord = await PatientMedicalRecordModel.update({ recordNumber, allergies, medicalConditions, fullName });
+            const patientMedicalRecordUpdated = await PatientMedicalRecordService.updatePatientMedicalRecord({ recordNumber, allergies, medicalConditions, fullName });
 
-            console.log('Patient medical record updated:', patientMedicalRecord);
 
-            return res.status(201).json({
+            return res.status(200).json({
                 message: 'Patient medical record updated successfully.',
-                patientMedicalRecord,
+                patientMedicalRecord: patientMedicalRecordUpdated,
             });
         }
         catch (error) {
             console.error('Error updating patient medical record:', error);
             return res.status(500).json({
                 error: 'Failed to update patient medical record.',
+                details: error.message,
+            });
+        }
+    }
+
+    static async deletePatientMedicalRecord(req, res) {
+        try {
+            const { recordNumber } = req.body;
+
+            if (!recordNumber) {
+                return res.status(400).json({ error: 'Record number is required to delete a patient medical record.' });
+            }
+
+            const patientMedicalRecordDeleted = await PatientMedicalRecordService.deletePatientMedicalRecord(recordNumber);
+
+            if (!patientMedicalRecordDeleted) {
+                return res.status(404).json({
+                    error: 'Patient medical record not found.',
+                });
+            }
+
+            return res.status(200).json({
+                message: 'Patient medical record deleted successfully.',
+                patientMedicalRecord: patientMedicalRecordDeleted,
+            });
+
+        } catch (error) {
+            console.error('Error deleting patient medical record:', error);
+
+            return res.status(500).json({
+                error: 'Failed to delete patient medical record.',
                 details: error.message,
             });
         }
@@ -44,6 +74,37 @@ class PatientMedicalRecordController {
             // Send an error response
             return res.status(500).json({
                 error: 'Failed to fetch patient medical records.',
+                details: error.message,
+            });
+        }
+    }
+
+    static async getPatientMedicalRecordByRecordNumber(req, res) {
+        try {
+            const { recordNumber } = req.params;
+
+            if (!recordNumber) {
+                return res.status(400).json({ error: 'Record number is required to fetch a patient medical record.' });
+            }
+
+            const patientMedicalRecord = await PatientMedicalRecordService.getPatientMedicalRecordByRecordNumber(recordNumber);
+
+            if (!patientMedicalRecord) {
+                return res.status(404).json({
+                    error: 'Patient medical record not found.',
+                });
+            }
+
+            return res.status(200).json({
+                message: 'Patient medical record fetched successfully.',
+                data: patientMedicalRecord,
+            });
+
+        } catch (error) {
+            console.error('Error fetching patient medical record by record number:', error);
+
+            return res.status(500).json({
+                error: 'Failed to fetch patient medical record.',
                 details: error.message,
             });
         }
