@@ -77,6 +77,49 @@ class PatientMedicalRecordService {
             throw error;
         }
     }
+
+
+    static async createMultiplePatientMedicalRecords(records) {
+        if (!Array.isArray(records) || records.length === 0) {
+            throw new Error("A list of records with recordNumber and fullName is required.");
+        }
+    
+        const createdRecords = [];
+        const errors = [];
+    
+        for (const record of records) {
+            const { recordNumber, fullName } = record;
+    
+            if (!recordNumber || !fullName) {
+                errors.push({ record, error: "Record number and full name are required." });
+                continue;
+            }
+    
+            const existingRecord = await PatientMedicalRecordRepository.findByRecordNumber(recordNumber);
+    
+            if (existingRecord) {
+                errors.push({ record, error: "Record with this record number already exists." });
+                continue;
+            }
+    
+            try {
+                const newRecord = new PatientMedicalRecordModel({
+                    recordNumber,
+                    medicalConditions: [],
+                    allergies: [],
+                    fullName,
+                });
+    
+                const savedRecord = await newRecord.save();
+                createdRecords.push(savedRecord);
+            } catch (error) {
+                errors.push({ record, error: error.message });
+            }
+        }
+    
+        return { createdRecords, errors };
+    }
+    
 }
 
 module.exports = PatientMedicalRecordService;

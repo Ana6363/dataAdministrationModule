@@ -16,4 +16,6 @@ class PatientMedicalRecordRepository {
     static async deleteByRecordNumber(recordNumber) {
         return await PatientMedicalRecord.findOneAndDelete({ recordNumber });
     }    
+
+    
 }
