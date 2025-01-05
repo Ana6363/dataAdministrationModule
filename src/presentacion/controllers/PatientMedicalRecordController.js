@@ -6,9 +6,13 @@ class PatientMedicalRecordController {
 
     static async updatePatientMedicalRecord(req, res) {
         try {
+            console.log("DEBUG: Incoming request body:", req.body);
+            
             const { recordNumber, allergies, medicalConditions } = req.body;
     
+            // Validate input
             if (!recordNumber) {
+                console.log("DEBUG: Missing recordNumber:", recordNumber);
                 return res.status(400).json({ error: 'Record number is required to update the patient medical record.' });
             }
     
@@ -25,6 +29,7 @@ class PatientMedicalRecordController {
             );
     
             if (!updatedRecord) {
+                console.log("DEBUG: Record not found for update:", recordNumber);
                 return res.status(404).json({ error: 'Patient medical record not found.' });
             }
     
@@ -40,6 +45,7 @@ class PatientMedicalRecordController {
             });
         }
     }
+    
     
     
 
