@@ -7,6 +7,8 @@ class PatientMedicalRecordService {
     static async updatePatientMedicalRecord(data) {
         const { recordNumber, medicalConditions, allergies, fullName } = data;
     
+        console.log("DEBUG: Received data for update:", data);
+    
         // Validate input
         if (!recordNumber || !Array.isArray(medicalConditions) || !Array.isArray(allergies) || !fullName) {
             throw new Error('Record number, medical conditions (as array), allergies (as array), and full name are required.');
@@ -18,6 +20,8 @@ class PatientMedicalRecordService {
         if (!existingRecord) {
             throw new Error('Patient medical record not found.');
         }
+    
+        console.log("DEBUG: Existing record for update:", existingRecord);
     
         // Update medicalConditions: Add only new conditions
         const newConditions = medicalConditions.filter(
@@ -37,13 +41,15 @@ class PatientMedicalRecordService {
         }
     
         // Save the updated record
+        console.log("DEBUG: Saving updated record:", existingRecord);
+    
         const updatedRecord = await existingRecord.save();
+    
+        console.log("DEBUG: Updated record saved successfully:", updatedRecord);
     
         return updatedRecord;
     }
     
-    
-
     static async deletePatientMedicalRecord(recordNumber) {
         if (!recordNumber) {
             throw new Error('Record number is required to delete.');

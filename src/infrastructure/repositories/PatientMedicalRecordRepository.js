@@ -15,7 +15,11 @@ class PatientMedicalRecordRepository {
     }
     static async deleteByRecordNumber(recordNumber) {
         return await PatientMedicalRecord.findOneAndDelete({ recordNumber });
-    }    
+    }
+    
+    static async save(record) {
+        return await record.save();
+    }
 
     
 }
