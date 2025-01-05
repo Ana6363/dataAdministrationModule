@@ -10,13 +10,18 @@ class PatientMedicalRecordService {
         console.log("DEBUG: Received data for update:", data);
     
         // Validate input
-        if (!recordNumber || !Array.isArray(medicalConditions) || !Array.isArray(allergies)) {
-            throw new Error('Record number, medical conditions (as array), and allergies (as array) are required.');
+        if (!recordNumber) {
+            throw new Error('Record number is required.');
+        }
+        if (!Array.isArray(medicalConditions)) {
+            throw new Error('Medical conditions must be an array.');
+        }
+        if (!Array.isArray(allergies)) {
+            throw new Error('Allergies must be an array.');
         }
     
-        // Fetch the existing record to ensure it exists
+        // Fetch the existing record
         const existingRecord = await PatientMedicalRecordRepository.findByRecordNumber(recordNumber);
-    
         if (!existingRecord) {
             throw new Error('Patient medical record not found.');
         }
@@ -27,22 +32,27 @@ class PatientMedicalRecordService {
         const updatedAllergies = Array.from(new Set([...existingRecord.allergies, ...allergies]));
         const updatedMedicalConditions = Array.from(new Set([...existingRecord.medicalConditions, ...medicalConditions]));
     
-        // Update the record using findOneAndUpdate
+        // Update the record in the database
         const updatedRecord = await PatientMedicalRecordModel.findOneAndUpdate(
-            { recordNumber }, // Query to match the record
-            { 
-                $set: { 
-                    allergies: updatedAllergies, 
-                    medicalConditions: updatedMedicalConditions 
-                } 
+            { recordNumber },
+            {
+                $set: {
+                    allergies: updatedAllergies,
+                    medicalConditions: updatedMedicalConditions
+                }
             },
             { new: true } // Return the updated document
         );
+    
+        if (!updatedRecord) {
+            throw new Error('Failed to update patient medical record.');
+        }
     
         console.log("DEBUG: Updated record:", updatedRecord);
     
         return updatedRecord;
     }
+    
     
     
     static async deletePatientMedicalRecord(recordNumber) {
