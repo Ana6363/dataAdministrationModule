@@ -5,37 +5,45 @@ const PatientMedicalRecordRepository = require('../infrastructure/repositories/P
 
 class PatientMedicalRecordService {
     static async updatePatientMedicalRecord(data) {
-        
         const { recordNumber, medicalConditions, allergies, fullName } = data;
-
+    
         // Validate input
-        if (!recordNumber || !medicalConditions || !allergies || !fullName) {
-            return res.status(400).json({ error: 'Record number, medical conditions, allergies and full name are required.' });
+        if (!recordNumber || !Array.isArray(medicalConditions) || !Array.isArray(allergies) || !fullName) {
+            throw new Error('Record number, medical conditions (as array), allergies (as array), and full name are required.');
         }
-
-        const existingPatientMedicalRecord = await PatientMedicalRecordRepository.findByRecordNumber(data.recordNumber);
-
+    
+        // Fetch the existing patient medical record
+        const existingPatientMedicalRecord = await PatientMedicalRecordRepository.findByRecordNumber(recordNumber);
+    
         if (!existingPatientMedicalRecord) {
             throw new Error('Patient medical record not found.');
         }
-
-        if (medicalConditions && medicalConditions !== existingPatientMedicalRecord.medicalConditions) {
-            existingPatientMedicalRecord.medicalConditions = medicalConditions;
+    
+        // Update medicalConditions: Add only new conditions
+        if (medicalConditions && medicalConditions.length > 0) {
+            const newConditions = medicalConditions.filter(
+                condition => !existingPatientMedicalRecord.medicalConditions.includes(condition)
+            );
+            existingPatientMedicalRecord.medicalConditions.push(...newConditions);
         }
-
-        if (allergies && allergies !== existingPatientMedicalRecord.allergies) {    
-            existingPatientMedicalRecord.allergies = allergies;
+    
+        // Update allergies: Add only new allergies
+        if (allergies && allergies.length > 0) {
+            const newAllergies = allergies.filter(
+                allergy => !existingPatientMedicalRecord.allergies.includes(allergy)
+            );
+            existingPatientMedicalRecord.allergies.push(...newAllergies);
         }
-
-        if (fullName && fullName !== existingPatientMedicalRecord.fullName) {    
+    
+        // Update full name if it's different
+        if (fullName && fullName !== existingPatientMedicalRecord.fullName) {
             existingPatientMedicalRecord.fullName = fullName;
         }
-
+    
         // Save and return the updated patient medical record
         return await existingPatientMedicalRecord.save();
-
-            
     }
+    
 
     static async deletePatientMedicalRecord(recordNumber) {
         if (!recordNumber) {
