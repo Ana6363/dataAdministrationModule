@@ -12,37 +12,36 @@ class PatientMedicalRecordService {
             throw new Error('Record number, medical conditions (as array), allergies (as array), and full name are required.');
         }
     
-        // Fetch the existing patient medical record
-        const existingPatientMedicalRecord = await PatientMedicalRecordRepository.findByRecordNumber(recordNumber);
+        // Fetch the existing record
+        const existingRecord = await PatientMedicalRecordRepository.findByRecordNumber(recordNumber);
     
-        if (!existingPatientMedicalRecord) {
+        if (!existingRecord) {
             throw new Error('Patient medical record not found.');
         }
     
         // Update medicalConditions: Add only new conditions
-        if (medicalConditions && medicalConditions.length > 0) {
-            const newConditions = medicalConditions.filter(
-                condition => !existingPatientMedicalRecord.medicalConditions.includes(condition)
-            );
-            existingPatientMedicalRecord.medicalConditions.push(...newConditions);
-        }
+        const newConditions = medicalConditions.filter(
+            condition => !existingRecord.medicalConditions.includes(condition)
+        );
+        existingRecord.medicalConditions.push(...newConditions);
     
         // Update allergies: Add only new allergies
-        if (allergies && allergies.length > 0) {
-            const newAllergies = allergies.filter(
-                allergy => !existingPatientMedicalRecord.allergies.includes(allergy)
-            );
-            existingPatientMedicalRecord.allergies.push(...newAllergies);
+        const newAllergies = allergies.filter(
+            allergy => !existingRecord.allergies.includes(allergy)
+        );
+        existingRecord.allergies.push(...newAllergies);
+    
+        // Update full name if different
+        if (fullName && fullName !== existingRecord.fullName) {
+            existingRecord.fullName = fullName;
         }
     
-        // Update full name if it's different
-        if (fullName && fullName !== existingPatientMedicalRecord.fullName) {
-            existingPatientMedicalRecord.fullName = fullName;
-        }
+        // Save the updated record
+        const updatedRecord = await existingRecord.save();
     
-        // Save and return the updated patient medical record
-        return await existingPatientMedicalRecord.save();
+        return updatedRecord;
     }
+    
     
 
     static async deletePatientMedicalRecord(recordNumber) {

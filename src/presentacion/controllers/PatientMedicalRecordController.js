@@ -5,27 +5,35 @@ class PatientMedicalRecordController {
     static async updatePatientMedicalRecord(req, res) {
         try {
             const { recordNumber, allergies, medicalConditions, fullName } = req.body;
-
-            if (!recordNumber || !allergies || !medicalConditions || !fullName) {
-                return res.status(400).json({ error: 'Record number, allergies, medical conditions, and full name are required.' });
+    
+            // Validate input
+            if (!recordNumber || !Array.isArray(allergies) || !Array.isArray(medicalConditions) || !fullName) {
+                return res.status(400).json({
+                    error: 'Record number, allergies (as array), medical conditions (as array), and full name are required.',
+                });
             }
-
-            const patientMedicalRecordUpdated = await PatientMedicalRecordService.updatePatientMedicalRecord({ recordNumber, allergies, medicalConditions, fullName });
-
-
+    
+            // Pass the data to the service for updating
+            const updatedRecord = await PatientMedicalRecordService.updatePatientMedicalRecord({
+                recordNumber,
+                allergies,
+                medicalConditions,
+                fullName,
+            });
+    
+            // Return the updated record
             return res.status(200).json({
                 message: 'Patient medical record updated successfully.',
-                patientMedicalRecord: patientMedicalRecordUpdated,
+                patientMedicalRecord: updatedRecord,
             });
-        }
-        catch (error) {
+        } catch (error) {
             console.error('Error updating patient medical record:', error);
             return res.status(500).json({
                 error: 'Failed to update patient medical record.',
                 details: error.message,
             });
         }
-    }
+    }    
 
     static async deletePatientMedicalRecord(req, res) {
         try {
