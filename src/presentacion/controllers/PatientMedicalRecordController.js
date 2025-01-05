@@ -125,6 +125,30 @@ class PatientMedicalRecordController {
             });
         }
     }
+
+    static async createMultiplePatientMedicalRecords(req, res) {
+        try {
+            const records = req.body.records; // Expecting an array of { recordNumber, fullName }
+    
+            if (!Array.isArray(records) || records.length === 0) {
+                return res.status(400).json({ error: "A list of records is required." });
+            }
+    
+            const { createdRecords, errors } = await PatientMedicalRecordService.createMultiplePatientMedicalRecords(records);
+    
+            return res.status(200).json({
+                message: "Patient medical records processed.",
+                createdRecords,
+                errors,
+            });
+        } catch (error) {
+            console.error("Error creating multiple patient medical records:", error);
+            return res.status(500).json({
+                error: "Failed to create patient medical records.",
+                details: error.message,
+            });
+        }
+    }
     
 
 }
