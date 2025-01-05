@@ -1,30 +1,36 @@
 const PatientMedicalRecordService = require('../../application/PatientMedicalRecordService');
 const PatientMedicalRecordModel = require('../../domain/models/PatientMedicalRecordModel');
 
-class PatientMedicalRecordController {
+class PatientMedicalRecordController {  
+
+
     static async updatePatientMedicalRecord(req, res) {
         try {
-            const { recordNumber, allergies, medicalConditions, fullName } = req.body;
+            const { recordNumber, allergies, medicalConditions } = req.body;
     
-            // Validate input
-            if (!recordNumber || !Array.isArray(allergies) || !Array.isArray(medicalConditions) || !fullName) {
+            if (!recordNumber) {
+                return res.status(400).json({ error: 'Record number is required to update the patient medical record.' });
+            }
+    
+            if (!Array.isArray(allergies) && !Array.isArray(medicalConditions)) {
                 return res.status(400).json({
-                    error: 'Record number, allergies (as array), medical conditions (as array), and full name are required.',
+                    error: 'Allergies and medical conditions should be provided as arrays.',
                 });
             }
     
-            // Pass the data to the service for updating
-            const updatedRecord = await PatientMedicalRecordService.updatePatientMedicalRecord({
+            const updatedRecord = await PatientMedicalRecordService.updatePatientMedicalRecord(
                 recordNumber,
-                allergies,
-                medicalConditions,
-                fullName,
-            });
+                allergies || [],
+                medicalConditions || []
+            );
     
-            // Return the updated record
+            if (!updatedRecord) {
+                return res.status(404).json({ error: 'Patient medical record not found.' });
+            }
+    
             return res.status(200).json({
                 message: 'Patient medical record updated successfully.',
-                patientMedicalRecord: updatedRecord,
+                data: updatedRecord,
             });
         } catch (error) {
             console.error('Error updating patient medical record:', error);
@@ -33,7 +39,8 @@ class PatientMedicalRecordController {
                 details: error.message,
             });
         }
-    }    
+    }
+    
 
     static async deletePatientMedicalRecord(req, res) {
         try {
