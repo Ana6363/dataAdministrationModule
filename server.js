@@ -1,15 +1,14 @@
 require('dotenv').config();
 const express = require('express');
-const connectToDatabase  = require('./src/infrastructure/DbConnection/MongoConnection');
+const connectToDatabase = require('./src/infrastructure/DbConnection/MongoConnection');
 
 const app = express();
 
 app.use(express.json());
 
-// Routes
-const AllergyController = require('./src/presentacion/controllers/AllergyController');
-app.post('/api/allergies', AllergyController.createAllergy);
-app.get('/api/allergies', AllergyController.getAllAllergies);
+// Import routes
+const routes = require('./src/presentacion/routes/routes');
+app.use('/api', routes); // Prefix all routes with /api
 
 async function startServer() {
     try {

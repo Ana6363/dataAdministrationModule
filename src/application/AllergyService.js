@@ -1,46 +1,78 @@
+
+const AllergyRepository = require('../infrastructure/repositories/AllergyRepository');
 const AllergyModel = require('../domain/models/AllergyModel');
 const mongoose = require('mongoose');
+
 
 
 class AllergyService {
     static async createAllergy(req, res) {
         try {
-            const { name, description } = req.body;
+            const { name, description, status } = req.body;
 
-            // Validate input
             if (!name || !description) {
                 return res.status(400).json({ error: 'Name and description are required.' });
             }
 
-            // Simulate allergy creation (e.g., save to a database)
-            const allergy = { name, description };
-
+            const allergy = { name, description, status };
             console.log('Allergy created:', allergy);
 
-            // Return success response
             return res.status(201).json({
                 message: 'Allergy created successfully.',
                 allergy,
             });
         } catch (error) {
             console.error('Error creating allergy:', error);
-
-            // Return error response
             return res.status(500).json({ error: 'Failed to create allergy.' });
         }
     }
 
     static async getAllAllergies() {
         try {
-            console.log("Fetching all allergies from the database...");
-            const allergies = await AllergyModel.find();
-            console.log("Fetched allergies:", allergies);
+            const allergies = await AllergyRepository.getAllAllergies();
+            console.log('Fetched allergies:', allergies);
             return allergies;
         } catch (error) {
-            console.error("Error fetching allergies:", error);
+            console.error('Error fetching allergies:', error);
             throw error;
         }
     }
+    static async updateAllergy(data) {
+        const { name, description} = data;
+    
+        if (!name && !description) {
+            throw new Error('At least one field (name or description) is required to update.');
+        }
+    
+        const existingAllergy = await AllergyRepository.findByName(data.name);
+    
+        if (!existingAllergy) {
+            throw new Error('Allergy not found.');
+        }
+    
+        if (description && description !== existingAllergy.description) {
+            existingAllergy.description = description;
+        }
+    
+        // Save and return the updated allergy
+        return await existingAllergy.save();
+    }
+
+
+    static async deleteAllergy(name) {
+        if (!name) {
+            throw new Error('Name is required to delete an allergy.');
+        }
+
+        const deletedAllergy = await AllergyRepository.deleteByName(name);
+
+        if (!deletedAllergy) {
+            throw new Error('Allergy not found.');
+        }
+
+        return deletedAllergy;
+    }
+    
 }
 
 module.exports = AllergyService;
