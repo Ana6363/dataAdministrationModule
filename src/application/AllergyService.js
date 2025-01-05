@@ -1,4 +1,9 @@
+
 const AllergyRepository = require('../infrastructure/repositories/AllergyRepository');
+const AllergyModel = require('../domain/models/AllergyModel');
+const mongoose = require('mongoose');
+
+
 
 class AllergyService {
     static async createAllergy(req, res) {
