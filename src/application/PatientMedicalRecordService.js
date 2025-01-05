@@ -8,37 +8,51 @@ class PatientMedicalRecordService {
     static async updatePatientMedicalRecord(data) {
         const { recordNumber, medicalConditions, allergies, fullName } = data;
     
-        // Validate that at least one field is provided
+        // Validate that the recordNumber and at least one field to update are provided
         if (!recordNumber || (!medicalConditions && !allergies && !fullName)) {
             throw new Error('Record number and at least one field to update (medicalConditions, allergies, or fullName) are required.');
         }
+    
+        console.log("DEBUG: Fetching medical record by recordNumber:", recordNumber);
     
         // Fetch the existing medical record by record number
         const existingRecord = await PatientMedicalRecordRepository.findByRecordNumber(recordNumber);
     
         if (!existingRecord) {
-            throw new Error('Patient medical record not found.');
+            throw new Error(`Patient medical record with recordNumber ${recordNumber} not found.`);
         }
     
+        console.log("DEBUG: Existing medical record fetched:", existingRecord);
+    
         // Update medicalConditions if provided and different
-        if (medicalConditions && medicalConditions !== existingRecord.medicalConditions) {
+        if (medicalConditions && JSON.stringify(medicalConditions) !== JSON.stringify(existingRecord.medicalConditions)) {
+            console.log("DEBUG: Updating medicalConditions from", existingRecord.medicalConditions, "to", medicalConditions);
             existingRecord.medicalConditions = medicalConditions;
         }
     
         // Update allergies if provided and different
-        if (allergies && allergies !== existingRecord.allergies) {
+        if (allergies && JSON.stringify(allergies) !== JSON.stringify(existingRecord.allergies)) {
+            console.log("DEBUG: Updating allergies from", existingRecord.allergies, "to", allergies);
             existingRecord.allergies = allergies;
         }
     
         // Update fullName if provided and different
         if (fullName && fullName !== existingRecord.fullName) {
+            console.log("DEBUG: Updating fullName from", existingRecord.fullName, "to", fullName);
             existingRecord.fullName = fullName;
         }
     
         // Save the updated record
-        const updatedRecord = await existingRecord.save();
-        return updatedRecord;
+        try {
+            const updatedRecord = await existingRecord.save();
+            console.log("DEBUG: Updated medical record saved successfully:", updatedRecord);
+            return updatedRecord;
+        } catch (error) {
+            console.error("ERROR: Failed to save updated medical record:", error.message);
+            throw new Error(`Failed to update patient medical record: ${error.message}`);
+        }
     }
+    
     
     
     static async deletePatientMedicalRecord(recordNumber) {
