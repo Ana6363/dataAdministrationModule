@@ -95,63 +95,6 @@ class PatientMedicalRecordService {
             throw error;
         }
     }
-
-
-    static async createMultiplePatientMedicalRecords(records) {
-        console.log("DEBUG: Received records:", records);
-    
-        if (!Array.isArray(records) || records.length === 0) {
-            throw new Error("A list of records with recordNumber and fullName is required.");
-        }
-    
-        const createdRecords = [];
-        const errors = [];
-    
-        for (const record of records) {
-            const recordNumber = record.RecordNumber || record.recordNumber;
-            const fullName = record.FullName || record.fullName;
-    
-            console.log("DEBUG: Normalized recordNumber:", recordNumber, "fullName:", fullName);
-    
-            if (!recordNumber || !fullName) {
-                console.warn("DEBUG: Validation failed for record:", record);
-                errors.push({ record, error: "Record number and full name are required." });
-                continue;
-            }
-    
-            try {
-                console.log("DEBUG: Checking if record exists for recordNumber:", recordNumber);
-                const existingRecord = await PatientMedicalRecordRepository.findByRecordNumber(recordNumber);
-                console.log("DEBUG: Existing record for recordNumber:", recordNumber, existingRecord);
-    
-                if (existingRecord) {
-                    console.warn("DEBUG: Record already exists for recordNumber:", recordNumber);
-                    errors.push({ record, error: "Record with this record number already exists." });
-                    continue;
-                }
-    
-                console.log("DEBUG: Creating new record for:", { recordNumber, fullName });
-                const newRecord = new PatientMedicalRecordModel({
-                    recordNumber,
-                    medicalConditions: [],
-                    allergies: [],
-                    fullName,
-                });
-    
-                const savedRecord = await newRecord.save();
-                console.log("DEBUG: Record saved successfully:", savedRecord);
-                createdRecords.push(savedRecord);
-            } catch (error) {
-                console.error("ERROR: Failed to save record:", record, "Error:", error.message);
-                errors.push({ record, error: error.message });
-            }
-        }
-    
-        console.log("DEBUG: Created records:", createdRecords);
-        console.log("DEBUG: Errors:", errors);
-    
-        return { createdRecords, errors };
-    }    
 }
 
 module.exports = PatientMedicalRecordService;
