@@ -19,3 +19,4 @@ class PatientMedicalRecordRepository {
 
     
 }
+module.exports = PatientMedicalRecordRepository;
