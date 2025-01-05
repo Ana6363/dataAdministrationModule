@@ -41,6 +41,7 @@ class PatientMedicalRecordController {
         }
     }
     
+    
 
     static async deletePatientMedicalRecord(req, res) {
         try {

@@ -13,27 +13,31 @@ class PatientMedicalRecordService {
         }
     
         try {
-            const patientMedicalRecord = await PatientMedicalRecordModel.findOne({ recordNumber });
+            // Find the existing medical record by record number
+            const existingRecord = await PatientMedicalRecordModel.findOne({ recordNumber });
     
-            if (!patientMedicalRecord) {
+            if (!existingRecord) {
                 throw new Error('Patient medical record not found.');
             }
     
-            // Add new allergies and medical conditions, avoiding duplicates
-            patientMedicalRecord.allergies = Array.from(
-                new Set([...patientMedicalRecord.allergies, ...allergiesToAdd])
-            );
-            patientMedicalRecord.medicalConditions = Array.from(
-                new Set([...patientMedicalRecord.medicalConditions, ...medicalConditionsToAdd])
+            // Update allergies and medical conditions (merge without duplicates)
+            existingRecord.allergies = Array.from(
+                new Set([...existingRecord.allergies, ...allergiesToAdd])
             );
     
-            const updatedRecord = await patientMedicalRecord.save();
+            existingRecord.medicalConditions = Array.from(
+                new Set([...existingRecord.medicalConditions, ...medicalConditionsToAdd])
+            );
+    
+            // Save the updated record
+            const updatedRecord = await existingRecord.save();
             return updatedRecord;
         } catch (error) {
             console.error('Error updating patient medical record:', error);
             throw error;
         }
     }
+    
     
     
     
