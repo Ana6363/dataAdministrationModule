@@ -6,30 +6,17 @@ class PatientMedicalRecordController {
 
     static async updatePatientMedicalRecord(req, res) {
         try {
-            console.log("DEBUG: Incoming request body:", req.body);
-            
             const { recordNumber, allergies, medicalConditions } = req.body;
     
-            // Validate input
-            if (!recordNumber) {
-                console.log("DEBUG: Missing recordNumber:", recordNumber);
-                return res.status(400).json({ error: 'Record number is required to update the patient medical record.' });
-            }
-    
-            if (!Array.isArray(allergies) && !Array.isArray(medicalConditions)) {
+            if (!recordNumber || !Array.isArray(allergies) || !Array.isArray(medicalConditions)) {
                 return res.status(400).json({
-                    error: 'Allergies and medical conditions should be provided as arrays.',
+                    error: 'Record number, allergies, and medical conditions are required and must be valid arrays.',
                 });
             }
     
-            const updatedRecord = await PatientMedicalRecordService.updatePatientMedicalRecord(
-                recordNumber,
-                allergies || [],
-                medicalConditions || []
-            );
+            const updatedRecord = await PatientMedicalRecordService.updatePatientMedicalRecord(recordNumber, allergies, medicalConditions);
     
             if (!updatedRecord) {
-                console.log("DEBUG: Record not found for update:", recordNumber);
                 return res.status(404).json({ error: 'Patient medical record not found.' });
             }
     
@@ -45,7 +32,6 @@ class PatientMedicalRecordController {
             });
         }
     }
-    
     
     
 
