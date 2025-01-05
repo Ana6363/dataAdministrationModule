@@ -1,5 +1,3 @@
-const MedicalConditionsModel = require('../domain/models/MedicalConditionsModel');
-const mongoose = require('mongoose');
 const MedicalConditionsRepository = require('../infrastructure/repositories/MedicalConditionsRepository');
 
 class MedicalConditionsService {
@@ -33,7 +31,7 @@ class MedicalConditionsService {
     static async getAllMedicalConditions() {
         try {
             console.log("Fetching all medical conditions from the database...");
-            const medicalConditions = await MedicalConditionsModel.find();
+            const medicalConditions = await MedicalConditionsRepository.getAllMedicalConditions();
             console.log("Fetched medical conditions:", medicalConditions);
             return medicalConditions;
         } catch (error) {
