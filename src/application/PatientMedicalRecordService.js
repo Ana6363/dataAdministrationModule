@@ -5,16 +5,16 @@ const PatientMedicalRecordRepository = require('../infrastructure/repositories/P
 
 class PatientMedicalRecordService {
     static async updatePatientMedicalRecord(data) {
-        const { recordNumber, medicalConditions, allergies, fullName } = data;
+        const { recordNumber, medicalConditions, allergies } = data;
     
         console.log("DEBUG: Received data for update:", data);
     
         // Validate input
-        if (!recordNumber || !Array.isArray(medicalConditions) || !Array.isArray(allergies) || !fullName) {
-            throw new Error('Record number, medical conditions (as array), allergies (as array), and full name are required.');
+        if (!recordNumber || !Array.isArray(medicalConditions) || !Array.isArray(allergies)) {
+            throw new Error('Record number, medical conditions (as array), and allergies (as array) are required.');
         }
     
-        // Fetch the existing record
+        // Fetch the existing record to ensure it exists
         const existingRecord = await PatientMedicalRecordRepository.findByRecordNumber(recordNumber);
     
         if (!existingRecord) {
@@ -23,32 +23,27 @@ class PatientMedicalRecordService {
     
         console.log("DEBUG: Existing record for update:", existingRecord);
     
-        // Update medicalConditions: Add only new conditions
-        const newConditions = medicalConditions.filter(
-            condition => !existingRecord.medicalConditions.includes(condition)
+        // Merge new allergies and medical conditions without duplicates
+        const updatedAllergies = Array.from(new Set([...existingRecord.allergies, ...allergies]));
+        const updatedMedicalConditions = Array.from(new Set([...existingRecord.medicalConditions, ...medicalConditions]));
+    
+        // Update the record using findOneAndUpdate
+        const updatedRecord = await PatientMedicalRecordModel.findOneAndUpdate(
+            { recordNumber }, // Query to match the record
+            { 
+                $set: { 
+                    allergies: updatedAllergies, 
+                    medicalConditions: updatedMedicalConditions 
+                } 
+            },
+            { new: true } // Return the updated document
         );
-        existingRecord.medicalConditions.push(...newConditions);
     
-        // Update allergies: Add only new allergies
-        const newAllergies = allergies.filter(
-            allergy => !existingRecord.allergies.includes(allergy)
-        );
-        existingRecord.allergies.push(...newAllergies);
-    
-        // Update full name if different
-        if (fullName && fullName !== existingRecord.fullName) {
-            existingRecord.fullName = fullName;
-        }
-    
-        // Save the updated record
-        console.log("DEBUG: Saving updated record:", existingRecord);
-    
-        const updatedRecord = await existingRecord.save();
-    
-        console.log("DEBUG: Updated record saved successfully:", updatedRecord);
+        console.log("DEBUG: Updated record:", updatedRecord);
     
         return updatedRecord;
     }
+    
     
     static async deletePatientMedicalRecord(recordNumber) {
         if (!recordNumber) {
