@@ -39,8 +39,7 @@ router.get('/medical-conditions', MedicalConditionsController.getAllMedicalCondi
 router.put('/medical-conditions', MedicalConditionsController.updateMedicalCondition);
 router.delete('/medical-conditions', MedicalConditionsController.deleteMedicalCondition);
 
-// Patient Medical Records
-router.post('/patient-medical-records', PatientMedicalRecordController.createMultiplePatientMedicalRecords);
+
 router.put('/patient-medical-records', PatientMedicalRecordController.updatePatientMedicalRecord);
 router.get('/patient-medical-records', PatientMedicalRecordController.getAllPatientMedicalRecords);
 router.delete('/patient-medical-records', PatientMedicalRecordController.deletePatientMedicalRecord);
