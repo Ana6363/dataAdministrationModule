@@ -67,7 +67,7 @@ class PatientMedicalRecordService {
     static async getPatientMedicalRecordByRecordNumber(recordNumber) {
         try {
             console.log("Fetching patient medical record by record number from the database...");
-            const patientMedicalRecord = await PatientMedicalRecordService.findByRecordNumber(recordNumber);
+            const patientMedicalRecord = await PatientMedicalRecordRepository.findByRecordNumber(recordNumber);
             console.log("Fetched patient medical record:", patientMedicalRecord);
             return patientMedicalRecord;
         } catch (error) {
