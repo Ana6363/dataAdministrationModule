@@ -55,7 +55,7 @@ class PatientMedicalRecordService {
     static async getAllPatientMedicalRecords() {
         try {
             console.log("Fetching all patient medical records from the database...");
-            const patientMedicalRecords = await PatientMedicalRecordRepository.find();
+            const patientMedicalRecords = await PatientMedicalRecordRepository.getAllPatientMedicalRecords();
             console.log("Fetched patient medical records:", patientMedicalRecords);
             return patientMedicalRecords;
         } catch (error) {
@@ -63,6 +63,7 @@ class PatientMedicalRecordService {
             throw error;
         }
     }
+    
 
     static async getPatientMedicalRecordByRecordNumber(recordNumber) {
         try {
